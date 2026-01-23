@@ -6,16 +6,16 @@
 
 # Configuration
 BACKUP_DIR="/var/backups/mongo_data"
-DB_NAME="kbp-page-editor"
+DB_NAME="db-name"
 DATE=$(date +%Y%m%d_%H%M%S)
 FILE_NAME="mongo_backup_$DATE.gz"
 
-# Kredensial (Gunakan tanda petik tunggal untuk password)
-MONGO_USER='kbp_page_editor'
-MONGO_PASS='@p1455woRD!#' # Ganti dengan password asli
-AUTH_DB="kbp-page-editor"
+# Credentials (Use single quotes for password)
+MONGO_USER='usr-db-mongo'
+MONGO_PASS='usr-db-pass'
+AUTH_DB="db-name-auth" # usually same as db name
 
-# 1. Eksekusi Backup
+# 1. Backup Execution
 echo "[$DATE] Memulai backup MongoDB: $DB_NAME..."
 mongodump --db="$DB_NAME" \
           --username="$MONGO_USER" \
