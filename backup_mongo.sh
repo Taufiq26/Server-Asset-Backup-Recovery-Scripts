@@ -24,16 +24,16 @@ mongodump --db="$DB_NAME" \
           --archive="$BACKUP_DIR/$FILE_NAME" \
           --gzip
 
-# Upload ke Google Drive
-echo "Uploading MongoDB backup to Cloud..."
-rclone copy $BACKUP_DIR/$FILE_NAME gdrive:backups_project_x/mongo_data/
-
 if [ $? -eq 0 ]; then
     echo "Backup MongoDB berhasil: $FILE_NAME"
 else
     echo "Backup MongoDB GAGAL!"
     exit 1
 fi
+
+# Upload ke Google Drive
+echo "Uploading MongoDB backup to Cloud..."
+rclone copy $BACKUP_DIR/$FILE_NAME gdrive:backups_project_x/mongo_data/
 
 # 2. Retention: Keep the 7 most recent files
 echo "Membersihkan backup lama (menyimpan 7 terbaru)..."
