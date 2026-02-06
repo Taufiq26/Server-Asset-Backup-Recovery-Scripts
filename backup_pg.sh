@@ -15,6 +15,10 @@ FILE_NAME="pg_backup_$DATE.sql"
 echo "[$DATE] Starting a PostgreSQL backup: $DB_NAME..."
 pg_dump -U $DB_USER -h localhost $DB_NAME > $BACKUP_DIR/$FILE_NAME
 
+# Upload ke Google Drive
+echo "Uploading PostgreSQL backup to Cloud..."
+rclone copy $BACKUP_DIR/$FILE_NAME gdrive:backups_project_x/pg_data/
+
 if [ $? -eq 0 ]; then
     echo "PostgreSQL backup successful: $FILE_NAME"
 else
