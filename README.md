@@ -94,3 +94,69 @@ Manual Recovery Commands
 - PostgreSQL: psql -U username -d target_db < /var/backups/pg_data/your_file.sql
 - MongoDB: mongorestore --db=target_db --username=admin --password=xxx --authenticationDatabase=admin --archive=/var/backups/mongo_data/your_file.gz --gzip
 - MinIO Assets: mc mirror /var/backups/minio_assets/your_folder/ local/target-bucket
+
+
+---
+
+
+# ☁️ Rclone Setup & Google Drive Integration
+
+Documentation for installing Rclone and connecting it to Google Drive on a headless Debian 11 server.
+
+---
+
+## 🛠️ 1. Installation
+
+Since the default repository might be outdated or unreachable, use the official installation script to get the latest version (v1.73.0+):
+
+```bash
+sudo -v ; curl [https://rclone.org/install.sh](https://rclone.org/install.sh) | sudo bash
+```
+
+Verify installation
+
+```bash
+rclone version
+```
+
+## ⚙️ 2. Google Drive Configuration (Headless Mode)
+Because the server does not have a GUI/Browser, we use the Remote Authentication method.
+1. Run the config wizard:
+```bash
+rclone config
+```
+2. Select n for New Remote.
+3. Name it: gdrive.
+4. Storage Type: Select drive (Google Drive).
+5. Client ID/Secret: Leave blank (Press Enter).
+6. Scope: Select 1 (Full access).
+7. Advanced Config: Select n.
+8. Use auto-config?: Select n (Required for Headless/SSH).
+
+## 🔑 3. Remote Authorization Flow
+When prompted for config_token, follow these steps on your Local Machine (Laptop/PC):
+1. Download Rclone for your OS (Windows/Mac/Linux).
+2. Open your local terminal/command prompt.
+3. Run the command provided by the server:
+```bash
+rclone authorize "drive" "TOKEN_STRING_FROM_SERVER"
+```
+4. A browser window will open. Log in to your Google Account and click Allow.
+5. Copy the JSON token code {...} generated in your local terminal.
+6. Paste the token back into the Server terminal and press Enter.
+
+## 🚀 4. Usage & Integration
+Basic Commands
+- Create Folder: rclone mkdir gdrive:backups_project_x
+- List Files: rclone ls gdrive:backups_project_x
+- Check Size: rclone size gdrive:backups_project_x
+
+Automated Sync in Scripts
+To integrate cloud backup into existing scripts, use the following commands:
+```bash
+# Copy file to Cloud
+rclone copy /path/to/backup.sql gdrive:backups_project_x/pg_data/
+
+# Retention: Delete files older than 7 days in Cloud
+rclone delete gdrive:backups_project_x/ --min-age 7d --rmdirs
+```
