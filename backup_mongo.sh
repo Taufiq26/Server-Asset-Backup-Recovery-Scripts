@@ -39,7 +39,7 @@ rclone copy $BACKUP_DIR/$FILE_NAME gdrive:backups_project_x/mongo_data/
 echo "Membersihkan backup lama (menyimpan 7 terbaru)..."
 ls -t $BACKUP_DIR/mongo_backup_*.gz | tail -n +8 | xargs -r rm 2>/dev/null
 
-# Hapus file di Cloud yang lebih tua dari 7 hari
+# Delete files in the Cloud that are older than 7 days
 rclone delete gdrive:backups_project_x/mongo_data --min-age 7d --rmdirs
 
 echo "Selesai."

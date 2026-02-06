@@ -9,6 +9,7 @@ SOURCE_ALIAS="local/bucket-name"
 BACKUP_BASE_DIR="/var/backups/minio_assets"
 DATE=$(date +%Y%m%d_%H%M%S)
 TARGET_DIR="$BACKUP_BASE_DIR/assets_$DATE"
+GDRIVE_PATH="gdrive:backups_kbp/minio_assets"
 
 # 1. Backup Execution (Copy from MinIO to Local Folder)
 echo "[$DATE] Starting asset backup from $SOURCE_ALIAS..."
@@ -29,13 +30,12 @@ fi
 echo "Syncing assets to Cloud..."
 rclone copy $TARGET_DIR gdrive:backups_project_x/minio_assets/assets_$DATE
 
-# 2. Retensi: Hanya simpan 2 folder terbaru
+# 2. Retention: Keep the 2 most recent files
 echo "Clean up old assets (keep the 2 newest ones)..."
-# Mencari folder dengan pola 'assets_*' di dalam folder backup
+# Look for folders with the pattern 'assets_*' in the backup folder
 ls -dt $BACKUP_BASE_DIR/assets_*/ | tail -n +3 | xargs -r rm -rf
 
-# Hapus file di Cloud yang lebih tua dari 2 hari
-# Kita list folder di GDrive, urutkan, dan hapus yang paling lama (selain 2 terbaru)
+# We list the folders in GDrive, sort them, and delete the oldest ones (besides the 2 newest ones)
 rclone lsf $GDRIVE_PATH --dirs-only | sort | head -n -2 | xargs -I {} rclone purge "$GDRIVE_PATH/{}"
 
 echo "Finished."
