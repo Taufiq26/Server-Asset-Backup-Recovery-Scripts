@@ -30,4 +30,7 @@ fi
 echo "Cleaning up old backups (keeping the latest 7)..."
 ls -t $BACKUP_DIR/pg_backup_*.sql | tail -n +8 | xargs -r rm
 
+# Hapus file di Cloud yang lebih tua dari 7 hari
+rclone delete gdrive:backups_project_x/pg_data --min-age 7d --rmdirs
+
 echo "Finished."
